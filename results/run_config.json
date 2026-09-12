@@ -1,0 +1,21 @@
+{
+  "data": "data/raw/drugcombs_scored.csv",
+  "target": "Bliss",
+  "out": "results",
+  "held_out": null,
+  "max_drugs": 10,
+  "min_test": 20,
+  "seed": 42,
+  "held_out_mapping": {
+    "lodo_000": "RUXOLITINIB",
+    "lodo_001": "TEMOZOLOMIDE",
+    "lodo_002": "SORAFENIB",
+    "lodo_003": "SUNITINIB",
+    "lodo_004": "ZOLINZA",
+    "lodo_005": "DASATINIB",
+    "lodo_006": "LAPATINIB",
+    "lodo_007": "METHOTREXATE",
+    "lodo_008": "5-FU",
+    "lodo_009": "BORTEZOMIB"
+  }
+}
