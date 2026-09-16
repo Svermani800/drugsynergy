@@ -1,0 +1,99 @@
+[
+  {
+    "split": "random",
+    "held_out_name": null,
+    "n_train": 219304,
+    "n_test": 54827,
+    "absent_structures": []
+  },
+  {
+    "split": "lodo_000",
+    "held_out_name": "RUXOLITINIB",
+    "n_train": 268300,
+    "n_test": 5831,
+    "absent_structures": [
+      "8200F8BEBBABBC8DDE876310"
+    ]
+  },
+  {
+    "split": "lodo_001",
+    "held_out_name": "TEMOZOLOMIDE",
+    "n_train": 268130,
+    "n_test": 6001,
+    "absent_structures": [
+      "C285D17579B0442AF6F81F6E"
+    ]
+  },
+  {
+    "split": "lodo_002",
+    "held_out_name": "SORAFENIB",
+    "n_train": 268123,
+    "n_test": 6008,
+    "absent_structures": [
+      "714D8ABB0E50EDC4E2143AE9"
+    ]
+  },
+  {
+    "split": "lodo_003",
+    "held_out_name": "SUNITINIB",
+    "n_train": 268063,
+    "n_test": 6068,
+    "absent_structures": [
+      "8EF0A48EF1E545CADBEABC48"
+    ]
+  },
+  {
+    "split": "lodo_004",
+    "held_out_name": "ZOLINZA",
+    "n_train": 268117,
+    "n_test": 6014,
+    "absent_structures": [
+      "D4030381944BA4B0EAE585D3"
+    ]
+  },
+  {
+    "split": "lodo_005",
+    "held_out_name": "DASATINIB",
+    "n_train": 268101,
+    "n_test": 6030,
+    "absent_structures": [
+      "FD8926639E328DCDF2FDE5A7"
+    ]
+  },
+  {
+    "split": "lodo_006",
+    "held_out_name": "LAPATINIB",
+    "n_train": 268119,
+    "n_test": 6012,
+    "absent_structures": [
+      "76003F2212A5DE6157EA8A8A"
+    ]
+  },
+  {
+    "split": "lodo_007",
+    "held_out_name": "METHOTREXATE",
+    "n_train": 268487,
+    "n_test": 5644,
+    "absent_structures": [
+      "585572F371657C1C22C476D9"
+    ]
+  },
+  {
+    "split": "lodo_008",
+    "held_out_name": "5-FU",
+    "n_train": 268169,
+    "n_test": 5962,
+    "absent_structures": [
+      "38E62F91F7DE5FA84EAA1BFB"
+    ]
+  },
+  {
+    "split": "lodo_009",
+    "held_out_name": "BORTEZOMIB",
+    "n_train": 268678,
+    "n_test": 5453,
+    "absent_structures": [
+      "78700451929BD30494FF912A"
+    ]
+  }
+]

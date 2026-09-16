@@ -1,0 +1,175 @@
+{
+  "input": {
+    "input_rows": 498865,
+    "target": "Bliss",
+    "missing_by_column": {
+      "ID": 0,
+      "Drug1": 2,
+      "Drug2": 8,
+      "Cell line": 0,
+      "ZIP": 0,
+      "Bliss": 0,
+      "Loewe": 1,
+      "HSA": 0
+    },
+    "invalid_rows": 10,
+    "self_combination_rows_removed": 382,
+    "valid_measurement_rows": 498473,
+    "repeated_pair_cell_rows": 93008,
+    "clean_rows": 405465,
+    "drugs": 5350,
+    "pairs": 78751,
+    "cell_lines": 123,
+    "target_summary": {
+      "count": 405465.0,
+      "mean": 68.77447087502954,
+      "std": 5975.614027177328,
+      "min": -221232.877,
+      "25%": -3.435,
+      "50%": 0.02,
+      "75%": 3.38,
+      "max": 1689573.201
+    }
+  },
+  "cell_line_curation": {
+    "input_rows": 405465,
+    "input_cell_lines": 123,
+    "matched_rows": 331349,
+    "matched_cell_lines": 103,
+    "unmatched_cell_lines": [
+      "3D7",
+      "COLO 858",
+      "COLO320DM",
+      "CTR",
+      "DD2",
+      "DIPG25",
+      "ED-40515",
+      "HB3",
+      "HL-60(TB)",
+      "JHH-136",
+      "JHH-520",
+      "KB-3-1",
+      "KB-CHR-8-5-11",
+      "KBM-7",
+      "LNCAP",
+      "MAK",
+      "MSTO",
+      "SU-DIPG-XIII",
+      "TMD8",
+      "UWB1289+BRCA1"
+    ],
+    "match_method": "Exact normalized match against unique model name, CCLE ID, or curated synonym"
+  },
+  "eligible_rows": 269175,
+  "eligible_drug_names": 97,
+  "unique_structures": 97,
+  "eligible_cell_lines": 96,
+  "extreme_targets_abs_gt_100": 1,
+  "expression_release": "DepMap Public 24Q4",
+  "expression_rows": 78,
+  "expression_genes_available": 19193,
+  "final_rows": 214583,
+  "development_drugs": [
+    "8EF0A48EF1E545CADBEABC48",
+    "FD8926639E328DCDF2FDE5A7",
+    "714D8ABB0E50EDC4E2143AE9",
+    "C285D17579B0442AF6F81F6E",
+    "76003F2212A5DE6157EA8A8A",
+    "D4030381944BA4B0EAE585D3",
+    "38E62F91F7DE5FA84EAA1BFB"
+  ],
+  "pilot_audit_drugs": [
+    "C1FEBE65424A8D1EDD070AC1",
+    "3B03B4F7337C690174634A70",
+    "8200F8BEBBABBC8DDE876310"
+  ],
+  "locked_audit_drugs": [
+    "A9F32493765670C6ACD771D5",
+    "775856982A7691620D237733",
+    "8A1561FBC50CFBCB3A3DEFD2"
+  ],
+  "audit_protocol": "Final audit drugs were reserved after the initial pilot audit and never used for candidate selection",
+  "selected_model": "xgb_multimodal_depth5",
+  "training_target_policy": "Clip training labels to [-100, 100]; never clip validation labels",
+  "development_metrics": {
+    "mean_baseline": {
+      "rmse": 5.8337132322776215,
+      "mae": 4.1469240534720155,
+      "r2": -0.056204878966329606,
+      "spearman": null
+    },
+    "ridge_multimodal": {
+      "rmse": 6.067586499679065,
+      "mae": 4.475194400512849,
+      "r2": -0.1493050800937303,
+      "spearman": 0.1418424549611502
+    },
+    "xgb_chemical": {
+      "rmse": 5.744355656463965,
+      "mae": 4.1196946599093085,
+      "r2": -0.024796198672661935,
+      "spearman": 0.15309334057813723
+    },
+    "xgb_multimodal_depth3": {
+      "rmse": 5.713639978670187,
+      "mae": 4.0834731178603585,
+      "r2": -0.0131352521851351,
+      "spearman": 0.19167367524691253
+    },
+    "xgb_multimodal_depth4": {
+      "rmse": 5.711342984941494,
+      "mae": 4.08368178572865,
+      "r2": -0.012465194472932309,
+      "spearman": 0.2021961539727437
+    },
+    "xgb_multimodal_depth5": {
+      "rmse": 5.700166202041103,
+      "mae": 4.093431756911899,
+      "r2": -0.009152834733971707,
+      "spearman": 0.21651390364092232
+    },
+    "xgb_multimodal_square_depth4": {
+      "rmse": 5.75371920235682,
+      "mae": 4.15363182176349,
+      "r2": -0.03095333011018358,
+      "spearman": 0.1925311372590776
+    },
+    "xgb_multimodal_square_depth5": {
+      "rmse": 5.744223211909595,
+      "mae": 4.146402400575369,
+      "r2": -0.027679478773831208,
+      "spearman": 0.19584223402916426
+    }
+  },
+  "locked_audit_metrics": {
+    "rmse": 4.323161356972599,
+    "mae": 3.227730083148323,
+    "r2": 0.06783188734607426,
+    "spearman": 0.27447422001203486
+  },
+  "empirical_absolute_error_quantiles": {
+    "0.5": 2.473303896188736,
+    "0.8": 5.114673099517822,
+    "0.9": 6.927059040784836,
+    "0.95": 8.89944319784641
+  },
+  "development_drug_names": [
+    "SUNITINIB",
+    "DASATINIB",
+    "SORAFENIB",
+    "TEMOZOLOMIDE",
+    "LAPATINIB",
+    "ZOLINZA",
+    "5-FU"
+  ],
+  "pilot_audit_drug_names": [
+    "CYCLOPHOSPHAMIDE",
+    "MITOMYCINE",
+    "RUXOLITINIB"
+  ],
+  "locked_audit_drug_names": [
+    "CARBOPLATIN",
+    "SN-38",
+    "RALOXIFENE"
+  ]
+}

@@ -9,3 +9,8 @@ results/*_predictions.csv
 results/*_split.csv
 results/extreme_scores.csv
 results/split_audit.json
+
+data/raw/pubchem/
+results/**/*.csv.gz
+results/model_comparison/extreme_source_matches.csv
+results/production/validation_predictions.csv.gz

@@ -1,0 +1,197 @@
+{
+  "models": {
+    "mean": {
+      "parameters": {
+        "constant": null,
+        "quantile": null,
+        "strategy": "mean"
+      },
+      "clip_training_target": false
+    },
+    "median": {
+      "parameters": {
+        "constant": null,
+        "quantile": null,
+        "strategy": "median"
+      },
+      "clip_training_target": false
+    },
+    "ridge": {
+      "parameters": {
+        "alpha": 10,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "lsqr",
+        "tol": 0.0001
+      },
+      "clip_training_target": false
+    },
+    "random_forest": {
+      "parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 14,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 10,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 60,
+        "n_jobs": 4,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "clip_training_target": false
+    },
+    "extra_trees": {
+      "parameters": {
+        "bootstrap": false,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 14,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 10,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 60,
+        "n_jobs": 4,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "clip_training_target": false
+    },
+    "xgboost": {
+      "parameters": {
+        "objective": "reg:squarederror",
+        "base_score": null,
+        "booster": null,
+        "callbacks": null,
+        "colsample_bylevel": null,
+        "colsample_bynode": null,
+        "colsample_bytree": 0.8,
+        "device": null,
+        "early_stopping_rounds": null,
+        "enable_categorical": true,
+        "eval_metric": null,
+        "feature_types": null,
+        "feature_weights": null,
+        "gamma": null,
+        "grow_policy": null,
+        "importance_type": null,
+        "interaction_constraints": null,
+        "learning_rate": 0.05,
+        "max_bin": null,
+        "max_cat_threshold": null,
+        "max_cat_to_onehot": null,
+        "max_delta_step": null,
+        "max_depth": 4,
+        "max_leaves": null,
+        "min_child_weight": null,
+        "missing": NaN,
+        "monotone_constraints": null,
+        "multi_strategy": null,
+        "n_estimators": 120,
+        "n_jobs": 4,
+        "num_parallel_tree": null,
+        "random_state": 42,
+        "reg_alpha": null,
+        "reg_lambda": null,
+        "sampling_method": null,
+        "scale_pos_weight": null,
+        "subsample": 0.8,
+        "tree_method": "hist",
+        "validate_parameters": null,
+        "verbosity": null
+      },
+      "clip_training_target": false
+    },
+    "ridge_clip_train": {
+      "parameters": {
+        "alpha": 10,
+        "copy_X": true,
+        "fit_intercept": true,
+        "max_iter": null,
+        "positive": false,
+        "random_state": null,
+        "solver": "lsqr",
+        "tol": 0.0001
+      },
+      "clip_training_target": true
+    },
+    "xgboost_clip_train": {
+      "parameters": {
+        "objective": "reg:squarederror",
+        "base_score": null,
+        "booster": null,
+        "callbacks": null,
+        "colsample_bylevel": null,
+        "colsample_bynode": null,
+        "colsample_bytree": 0.8,
+        "device": null,
+        "early_stopping_rounds": null,
+        "enable_categorical": true,
+        "eval_metric": null,
+        "feature_types": null,
+        "feature_weights": null,
+        "gamma": null,
+        "grow_policy": null,
+        "importance_type": null,
+        "interaction_constraints": null,
+        "learning_rate": 0.05,
+        "max_bin": null,
+        "max_cat_threshold": null,
+        "max_cat_to_onehot": null,
+        "max_delta_step": null,
+        "max_depth": 4,
+        "max_leaves": null,
+        "min_child_weight": null,
+        "missing": NaN,
+        "monotone_constraints": null,
+        "multi_strategy": null,
+        "n_estimators": 120,
+        "n_jobs": 4,
+        "num_parallel_tree": null,
+        "random_state": 42,
+        "reg_alpha": null,
+        "reg_lambda": null,
+        "sampling_method": null,
+        "scale_pos_weight": null,
+        "subsample": 0.8,
+        "tree_method": "hist",
+        "validate_parameters": null,
+        "verbosity": null
+      },
+      "clip_training_target": true
+    }
+  },
+  "held_out_mapping": {
+    "lodo_000": "RUXOLITINIB",
+    "lodo_001": "TEMOZOLOMIDE",
+    "lodo_002": "SORAFENIB",
+    "lodo_003": "SUNITINIB",
+    "lodo_004": "ZOLINZA",
+    "lodo_005": "DASATINIB",
+    "lodo_006": "LAPATINIB",
+    "lodo_007": "METHOTREXATE",
+    "lodo_008": "5-FU",
+    "lodo_009": "BORTEZOMIB"
+  },
+  "seed": 42,
+  "data_sha256": "e821d3662703c931852d77f237e1ad914659ff2f8b2515f032666271ee0b7302",
+  "sensitivity": "Clip training targets to [-100,100]; keep test targets unchanged. Central test subset is descriptive, not a prospective filtering rule."
+}

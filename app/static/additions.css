@@ -1,0 +1,12 @@
+.sample-link {
+  display: inline-block;
+  margin-top: 16px;
+  color: #0d685b;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sample-link:hover {
+  text-decoration: underline;
+}

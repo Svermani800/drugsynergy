@@ -1,113 +1,101 @@
-# Drug combination synergy: unseen-drug baseline
+# Synergy Atlas
 
-A beginner-friendly first version of a cancer drug-combination regression project. The main question is whether a model can predict synergy for a drug absent from its training data.
+An end-to-end machine-learning project for predicting **Bliss drug-combination synergy in cancer cell lines**, with a polished local interface and validation centered on drugs absent from training.
 
-This version loads `drugcombs_scored.csv`, audits and cleans the data, runs a mean predictor and regularized linear regression, and compares a random split with leave-one-drug-out evaluation. It does not yet test whether molecular or genomic features improve generalization.
+![Python](https://img.shields.io/badge/Python-3.11%2B-10221d) ![XGBoost](https://img.shields.io/badge/model-XGBoost-0d685b) ![Flask](https://img.shields.io/badge/UI-Flask-c9f05a) ![tests](https://img.shields.io/badge/tests-12%20passing-0d685b)
 
-## Dataset and target
+![Validation overview](results/production/validation_overview.png)
 
-The supplied CSV contains `ID, Drug1, Drug2, Cell line, ZIP, Bliss, Loewe, HSA`. Use **Bliss** as the continuous target. A positive score indicates greater effect than the Bliss independence expectation, but we do not assign clinical labels or probability/confidence estimates.
+## Try the interface
 
-For public data, [DrugComb's versioned summary table](https://zenodo.org/records/11102665) is a suitable starting point because it provides existing synergy summaries. See the [original DrugComb paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC6602441/) for the database and scoring context. The supplied file's exact release, scoring pipeline, and study provenance have not been established; similar column contents do not establish provenance. This run uses the supplied file, not the downloaded public reference table.
-
-| Column | Role |
-| --- | --- |
-| Drug1 / drug_a | Drug identity |
-| Drug2 / drug_b | Drug identity |
-| Cell line / cell_line | Cell identity |
-| Bliss / synergy | Regression target |
-| ID | Source identifier; not a predictor |
-| ZIP, Loewe, HSA | Alternative outcomes; never predictors of Bliss |
-| n_measurements, synergy_sd | Audit summaries only; never predictors |
-
-Doses, viability, fingerprints, and genomic data are absent from this file. Do not invent them. Rows are treated as precomputed combination summaries, not individual dose measurements.
-
-## Run
-
-Use Python 3.11 or newer (the recorded run used Python 3.14).
+The trained 6.5 MB model artifact is included, so the UI does not require the raw research datasets.
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-# Copy your supplied CSV into data/raw/drugcombs_scored.csv first.
+./run_ui.sh
+```
+
+Open [http://127.0.0.1:7860](http://127.0.0.1:7860). The interface supports a single prediction, an empirical error band, and ranked CSV batch predictions. It deliberately labels results as research estimates rather than clinical recommendations.
+
+## What the model learns from
+
+The final representation is symmetric: swapping drug A and drug B produces the same prediction.
+
+- **Both drugs:** 256-bit radius-2 Morgan fingerprints plus molecular weight, logP, TPSA, hydrogen-bond donors and acceptors, rotatable bonds, ring count, and fraction sp3 carbon.
+- **Cell line:** the 96 most variable protein-coding expression features selected inside each training fold, standardized and reduced to 20 principal components.
+- **Context:** train-fitted one-hot tissue and cancer-type features.
+- **Estimator:** regularized depth-5 XGBoost with subsampling, column sampling, minimum child weight, and pseudo-Huber loss.
+
+Chemistry comes from [PubChem PUG REST](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest). Cell-line identities and cancer labels come from [Cell Model Passports](https://cellmodelpassports.sanger.ac.uk/documentation). Gene expression is from **DepMap Public 24Q4**, protein-coding log2(TPM + 1).
+
+## Validation design
+
+The main question is whether the model can say anything useful about a drug it has never seen. Every held-out fold removes the selected chemical structure from **both** drug columns. Aliases and salts are standardized to parent structures before splitting, and all preprocessing is refitted on the training fold.
+
+Seven development drugs were used to compare fixed candidates. An initial three-drug pilot audit exposed no labels to training, but after that result was inspected, it was not reused for the final claim. A fresh locked audit used **Carboplatin, SN-38, and Raloxifene** exactly once.
+
+| Development candidate | Mean held-out RMSE | Mean MAE | Spearman |
+| --- | ---: | ---: | ---: |
+| Mean predictor | 5.834 | 4.147 | — |
+| Ridge + all features | 6.068 | 4.475 | 0.142 |
+| XGBoost + chemistry | 5.744 | 4.120 | 0.153 |
+| XGBoost + all features, depth 3 | 5.714 | **4.083** | 0.192 |
+| XGBoost + all features, depth 4 | 5.711 | 4.084 | 0.202 |
+| **XGBoost + all features, depth 5** | **5.700** | 4.093 | **0.217** |
+
+The selected model achieved the following on the fresh locked audit:
+
+| RMSE | MAE | R² | Spearman | Test observations |
+| ---: | ---: | ---: | ---: | ---: |
+| **4.323** | **3.228** | **0.068** | **0.274** | 13,568 |
+
+The positive R² and rank correlation show a modest generalizable signal. They do not support a claim of clinical accuracy. The model still shrinks strong effects toward the center, which is visible in the validation plot. The UI therefore reports an empirical 80% absolute-error band derived only from the locked audit (±5.115 Bliss points).
+
+Training RMSE for the selected candidate averaged 5.124 versus 5.700 on development holdouts. That gap is monitored and is much smaller than an unconstrained tree ensemble would typically show, while the stronger squared-loss candidates failed to improve development performance. Training targets are capped to `[-100, 100]` to limit one unresolved extreme value; validation labels are never clipped.
+
+## Data pipeline
+
+```text
+498,865 supplied rows
+  └─ 405,465 unique unordered pair / cell observations after validation
+      └─ 331,349 rows matched to curated human cancer cell lines
+          └─ 269,175 rows with structures for both drugs
+              └─ 214,583 rows with DepMap expression (97 drugs, 78 cell lines)
+```
+
+The pipeline excludes ambiguous cell aliases and labels such as malaria strains `3D7`, `HB3`, and `DD2`. If two names resolve to the same standardized parent structure, their observations are aggregated before splitting so aliases cannot receive extra weight.
+
+## Reproduce training
+
+Raw data is intentionally excluded from Git. Place these files before training:
+
+```text
+data/raw/drugcombs_scored.csv
+data/raw/model_list_latest.csv.gz
+data/raw/OmicsExpressionProteinCodingGenesTPMLogp1_24Q4.csv
+data/processed/drug_structures.csv
+```
+
+Then run:
+
+```bash
+./train_production.sh
 python -m unittest discover -s tests -v
-python -m src.run --data data/raw/drugcombs_scored.csv --max-drugs 10
 ```
 
-The default evaluates the ten drugs with the most cleaned observations, selected using counts rather than outcomes. This is a first benchmark on well-covered drugs, not a representative estimate for all drugs. Exact selected names and options are in `results/run_config.json`. For one specified drug:
+The run writes fold metrics, compressed predictions, the model artifact, and a generated model-card figure. The split logic, aliases, feature transforms, and batch API are covered by 12 tests, including leakage prevention and drug-order invariance.
 
-```bash
-python -m src.run --data data/raw/drugcombs_scored.csv --held-out 5-FU --out results_5fu
-```
+## Repository map
 
-For all drugs with at least 20 cleaned test observations (potentially slow and disk intensive because each fold writes its partitions):
+- `src/production.py` — curation, train-only feature fitting, model comparison, locked audit, final artifact.
+- `src/curation.py` — exact unambiguous mapping to human cancer models and stable DepMap IDs.
+- `src/chemical_benchmark.py` — PubChem standardization and chemistry ablations.
+- `app/` — Flask API, responsive UI, batch ranking, and trained model artifact.
+- `tests/` — data, split, chemistry, curation, and live API integration tests.
+- `results/production/` — validation metrics, summary, and model-card figures.
 
-```bash
-python -m src.run --data data/raw/drugcombs_scored.csv --max-drugs 0 --min-test 20 --out results_all
-```
+## Scope
 
-Use a distinct output directory for a different experiment to avoid retaining obsolete fold files. `data/processed/clean.csv` is regenerated each run. `requirements-lock.txt` records the actual environment; `requirements.txt` allows compatible versions. To open learning notebooks, optionally install Jupyter and choose this environment's kernel.
-
-## Cleaning decisions
-
-1. Require the three identity columns and the selected target.
-2. Trim whitespace and uppercase identities. This merges case variants but does **not** resolve chemical synonyms, salt forms, or misspellings.
-3. Reject missing identities and nonnumeric/nonfinite targets; remove same-drug combinations.
-4. Sort each drug pair so A+B and B+A share the same key.
-5. Average all valid measurements for each unordered pair and cell line. Store their count and standard deviation for auditing.
-
-This targets average synergy for a pair/cell, weighting each resulting row equally. Repeats are not necessarily biological replicates: the file lacks study and dose-range metadata. Source-level harmonization should precede a scientific conclusion. Do not average across studies in a later study-holdout evaluation.
-
-Aggregation occurs before the split because all measurements of the same pair/cell are intentionally one observation. No training observation shares those measurements with a test observation. Distinct cell lines for the same drug pair can occur on both sides of the random split; that evaluation is not an unseen-pair test.
-
-## How the split prevents leakage
-
-`src/splits.py` places every row with the held-out drug in **either** drug column into test. It asserts that the selected drug is absent from both training columns. Grouping on `Drug1` alone would fail when that drug appears as `Drug2`.
-
-`unseen_drug_split(df, ["DRUG X", "DRUG Y"])` also supports a group of held-out drugs. Test rows are tagged with the actual number of drugs absent from training (one or two), and whether the cell line was seen. Metrics for one- and two-unseen strata are saved separately when present. Even single-drug holdout can incidentally remove every observation of a partner drug, so check these flags.
-
-Every model and encoder is fitted afresh on training data. No target-derived score is an input. Ridge alpha is fixed at 10; there is no test-set tuning. For later tuning, make inner held-out-drug splits using only the outer training data and fit every learned preprocessing step inside them. Resolve drug aliases before claiming generalization to a chemically unseen compound; this version guarantees exclusion of normalized **names**, not chemical structures.
-
-## Baselines explained
-
-- **Mean:** predicts the training target average for every row.
-- **Ridge identity:** regularized linear regression with shared one-hot drug features plus cell-line one-hot features. Adding the two drug vectors makes predictions invariant to drug order.
-
-An unseen drug has an all-zero identity vector, so its prediction comes from the known partner, cell line, and intercept. That is the intended limitation of this baseline. It has no information about a new drug's chemistry. Unknown cell lines also get zero identity features.
-
-## Outputs and interpretation
-
-`results/eda.json` contains dataset counts, missingness, target distribution, and input SHA-256. `extreme_scores.csv` lists aggregated observations with absolute scores above 100 as an investigation aid. This is a flag, not a proven invalidity rule: **no score clipping or outlier removal is performed**. Both a full histogram and a central-range view are generated.
-
-`metrics.csv` reports RMSE, MAE, R², Pearson, and Spearman by fold/model. Correlations are undefined for constant predictors and appear blank. `comparison.csv` contains the random result and the unweighted mean of per-drug fold metrics. LODO folds overlap, so this is not an independent pooled test set, and the mean fold RMSE is not pooled RMSE. Inspect individual held-out drugs rather than relying on the mean alone. Random and held-out evaluations also differ in test composition and training size.
-
-Predictions, split membership, and `split_audit.json` are saved locally for review. Models saved by the random evaluation were trained only on its training partition; they are demonstration artifacts, not final deployment models. Raw data, processed rows, per-row predictions, split membership, and model binaries are excluded from Git.
-
-See `results/FINDINGS.md` for the actual run. Extreme target values must be investigated before model comparisons can support conclusions. Calibration, prediction intervals, classification thresholds, SHAP, and molecular/genomic models are future work; a scatter plot is not uncertainty calibration.
-
-## Batch prediction
-
-Create a CSV containing `drug_a,drug_b,cell_line`, then run:
-
-```bash
-python -m src.predict results/ridge_identity.joblib candidates.csv ranked_predictions.csv
-```
-
-The output is sorted by predicted Bliss and includes unseen-drug and cell-coverage flags. Use models from the default Bliss run. No validated uncertainty estimate is available in this version.
-
-## Code map
-
-- `src/data.py`: validate, normalize, aggregate, audit.
-- `src/features.py`: symmetric train-fitted identity representation.
-- `src/splits.py`: reproducible random and drug-exclusion splits.
-- `src/models.py`: mean and Ridge baselines.
-- `src/evaluate.py`: regression and rank-correlation metrics.
-- `src/run.py`: EDA, training, predictions, and saved audits.
-- `src/predict.py`: batch predictions.
-- `notebooks/`: three short walkthroughs of these modules.
-- `tests/`: exclusion in both columns, group holdouts, unknown handling, pair symmetry, aggregation, and metric edge cases.
-
-## Next experiment
-
-First trace extreme scores to source experiments and document score units and calculation failures. Then map normalized names to stable chemical identifiers and SMILES, add fingerprints and descriptors with symmetric pair features, and compare them against this baseline on the same outer folds. Add harmonized cell-line expression later, with train-only scaling and dimensionality reduction. Compare drug-only, cell-only, and combined features under identical splits and report variation across held-out drugs.
+This model covers the 97 resolved drugs and 78 expression-matched cell-line labels listed by the UI. It does not infer chemistry for an arbitrary typed molecule, model dose-response surfaces, account for study/batch effects, or provide calibrated clinical probabilities. Stronger validation needs source-study identifiers, dose matrices, broader structure coverage, and independent external experiments.

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Synergy Atlas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='additions.css') }}">
+  </head>
+  <body>
+    <header class="nav">
+      <a class="brand" href="#">SYNERGY<span>ATLAS</span></a>
+      <div class="nav-meta"><span class="status-dot"></span><span id="model-status">Loading model</span></div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Cancer combination research</p>
+          <h1>Explore drug pairs.<br><em>Test the unfamiliar.</em></h1>
+          <p class="lede">A structure-aware model evaluated on drugs excluded entirely from training. Predictions combine molecular chemistry with curated cancer-cell expression.</p>
+        </div>
+        <div class="hero-mark" aria-hidden="true">
+          <div class="orb orb-a"></div><div class="orb orb-b"></div><div class="bond"></div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <form id="prediction-form" class="panel predictor">
+          <div class="panel-heading"><span>01</span><div><h2>Single prediction</h2><p>Select a pair and biological context.</p></div></div>
+          <label>First drug<select id="drug-a" required></select></label>
+          <button class="swap" id="swap" type="button" aria-label="Swap drugs">⇅</button>
+          <label>Second drug<select id="drug-b" required></select></label>
+          <label>Cancer cell line<select id="cell-line" required></select></label>
+          <button class="primary" type="submit">Predict Bliss score <span>→</span></button>
+          <p class="form-error" id="form-error" role="alert"></p>
+        </form>
+
+        <section class="panel result empty" id="result-panel" aria-live="polite">
+          <div class="panel-heading"><span>02</span><div><h2>Model readout</h2><p>Prediction and validation context.</p></div></div>
+          <div id="empty-state"><div class="empty-glyph">⌁</div><p>Your result will appear here.</p></div>
+          <div id="result-content" hidden>
+            <div class="score-line"><div><p>Predicted Bliss</p><strong id="score">—</strong></div><span id="label" class="pill">—</span></div>
+            <div class="range"><div class="range-track"><div id="range-fill"></div><i id="range-point"></i></div><div><span>−25</span><span>0</span><span>+25</span></div></div>
+            <dl>
+              <div><dt>Empirical 80% error band</dt><dd id="interval">—</dd></div>
+              <div><dt>Cancer type</dt><dd id="cancer-type">—</dd></div>
+              <div><dt>Tissue</dt><dd id="tissue">—</dd></div>
+            </dl>
+            <p class="research-note">Research estimate. This score is not a treatment recommendation or clinical result.</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="evidence">
+        <div class="section-title"><p class="eyebrow">Model evidence</p><h2>Designed around the hard test</h2></div>
+        <div class="metrics">
+          <article><span>Held-out drug RMSE</span><strong id="metric-rmse">—</strong><p>Measured only on the locked audit drugs.</p></article>
+          <article><span>Held-out drug MAE</span><strong id="metric-mae">—</strong><p>Typical absolute score error.</p></article>
+          <article><span>Rank correlation</span><strong id="metric-spearman">—</strong><p>Ability to rank combinations.</p></article>
+          <article><span>Curated observations</span><strong id="metric-rows">—</strong><p>Matched to structures and expression.</p></article>
+        </div>
+      </section>
+
+      <section class="batch panel">
+        <div class="panel-heading"><span>03</span><div><h2>Rank a candidate list</h2><p>Upload a CSV with drug_a, drug_b, and cell_line columns.</p></div></div>
+        <form id="batch-form"><input id="batch-file" type="file" accept=".csv,text/csv" required><button class="secondary" type="submit">Generate ranked CSV</button></form>
+        <a class="sample-link" href="{{ url_for('static', filename='sample_candidates.csv') }}" download>Download sample CSV →</a>
+        <p class="form-error" id="batch-error" role="alert"></p>
+      </section>
+    </main>
+
+    <footer><span>SYNERGY ATLAS / LOCAL RESEARCH BUILD</span><span>Bliss regression · chemical structure · DepMap expression</span></footer>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+{
+  "input_clean_rows": 405465,
+  "eligible_before_structure_aggregation": 274131,
+  "cohort_rows": 274131,
+  "resolved_names": 97,
+  "structures": 97,
+  "cell_lines": 106,
+  "extreme_rows": 1,
+  "held_out": {
+    "lodo_000": [
+      "RUXOLITINIB",
+      "8200F8BEBBABBC8DDE876310"
+    ],
+    "lodo_001": [
+      "TEMOZOLOMIDE",
+      "C285D17579B0442AF6F81F6E"
+    ],
+    "lodo_002": [
+      "SORAFENIB",
+      "714D8ABB0E50EDC4E2143AE9"
+    ],
+    "lodo_003": [
+      "SUNITINIB",
+      "8EF0A48EF1E545CADBEABC48"
+    ],
+    "lodo_004": [
+      "ZOLINZA",
+      "D4030381944BA4B0EAE585D3"
+    ],
+    "lodo_005": [
+      "DASATINIB",
+      "FD8926639E328DCDF2FDE5A7"
+    ],
+    "lodo_006": [
+      "LAPATINIB",
+      "76003F2212A5DE6157EA8A8A"
+    ],
+    "lodo_007": [
+      "METHOTREXATE",
+      "585572F371657C1C22C476D9"
+    ],
+    "lodo_008": [
+      "5-FU",
+      "38E62F91F7DE5FA84EAA1BFB"
+    ],
+    "lodo_009": [
+      "BORTEZOMIB",
+      "78700451929BD30494FF912A"
+    ]
+  },
+  "unresolved_held_out": [],
+  "cohort_note": "Top 100 drug names by measurement count; both drugs must resolve. Known malaria labels excluded. Remaining cell identities not independently curated for disease or species. Parent-connectivity aliases grouped before splitting."
+}
